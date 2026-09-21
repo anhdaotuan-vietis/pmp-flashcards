@@ -53,7 +53,9 @@ button.btn.primary{background:var(--primary);border-color:var(--primary);color:#
 .done{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:28px 20px;text-align:center;margin-top:18px}
 .done .big{font-size:20px;font-weight:800;margin-bottom:6px}
 .done .m{color:var(--muted);font-size:14px;margin-bottom:16px}
-#knownList,#addView{margin-top:14px;display:none}
+#knownList,#addView,#reviewView{margin-top:14px;display:none}
+.tab{font-size:12.5px}
+button.btn.pin-on{background:var(--primary);border-color:var(--primary);color:#fff}
 .kw{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--card)}
 .kw .en{font-weight:700;flex:1}
 .kw .vi{flex:1;color:var(--muted)}
@@ -82,6 +84,7 @@ button.btn.primary{background:var(--primary);border-color:var(--primary);color:#
    <div class="tab on" id="tabLearn">📖 Học</div>
    <div class="tab" id="tabKnown">✅ Đã thuộc (<span id="knownTab">0</span>)</div>
    <div class="tab" id="tabAdd">➕ Thêm từ</div>
+   <div class="tab" id="tabReview">⏰ Học lại (<span id="revTab">0</span>)</div>
  </div>
 
  <div class="controls" id="learnControls">
@@ -98,6 +101,7 @@ button.btn.primary{background:var(--primary);border-color:var(--primary);color:#
      </div>
    </div>
    <div class="hintflip">Chạm vào thẻ để lật xem nghĩa</div>
+   <div style="text-align:center;margin-top:12px"><button class="btn sm" id="btnReview">⏰ Học lại sau</button></div>
    <div class="answer">
      <button class="btn warn" id="btnUnknown">↻ Chưa thuộc</button>
      <button class="btn ok" id="btnKnown">✓ Thuộc rồi</button>
@@ -122,6 +126,8 @@ button.btn.primary{background:var(--primary);border-color:var(--primary);color:#
    <div id="customList"></div>
  </div>
 
+ <div id="reviewView"></div>
+
  <div class="footer">Từ vựng PMP. Từ bạn tự thêm &amp; tiến độ lưu trong trình duyệt máy này.</div>
 </div>
 
@@ -135,6 +141,8 @@ $("theme").onclick=function(){var c=document.documentElement.getAttribute('data-
 
 let known=new Set(); try{const s=JSON.parse(localStorage.getItem('pmp_fc_known')||'[]'); if(Array.isArray(s)) known=new Set(s);}catch(e){}
 let custom=[]; try{const c=JSON.parse(localStorage.getItem('pmp_fc_custom')||'[]'); if(Array.isArray(c)) custom=c.filter(w=>w&&w.en&&w.vi);}catch(e){}
+let review=new Set(); try{const rv=JSON.parse(localStorage.getItem('pmp_fc_review')||'[]'); if(Array.isArray(rv)) review=new Set(rv);}catch(e){}
+function saveReview(){try{localStorage.setItem('pmp_fc_review',JSON.stringify([...review]));}catch(e){}}
 let mode = localStorage.getItem('pmp_fc_mode')||'en2vi';
 let deck=[];    // thẻ trong lượt hiện tại
 let carry=[];   // từ đã "chưa thuộc" đủ số lần -> trộn vào lượt sau
@@ -153,13 +161,17 @@ function stats(){
   const total=ALL().length;
   $("knownN").textContent=known.size; $("totalN").textContent=total;
   $("remainN").textContent=total-known.size; $("knownTab").textContent=known.size;
+  if($("revTab"))$("revTab").textContent=review.size;
   $("prog").style.width=(total? known.size/total*100:0)+"%";
 }
 
 function startBatch(){
   const carrySet=new Set(carry.map(w=>w.en));
   const news=remaining().filter(w=>!carrySet.has(w.en)).slice(0,BATCH_NEW);
-  deck=shuffle(carry.concat(news));
+  let base=carry.concat(news);
+  const inBase=new Set(base.map(w=>w.en));
+  const pinned=ALL().filter(w=>review.has(w.en) && !inBase.has(w.en)); // "học lại sau" -> luôn có trong mọi lượt
+  deck=shuffle(base.concat(pinned));
   carry=[]; missCount={};
   flipped=false; render();
 }
@@ -188,6 +200,7 @@ function render(){
   else { $("frontLbl").textContent='Tiếng Việt'; $("frontTerm").textContent=w.vi; $("backLbl").textContent='Tiếng Anh'; $("backTerm").textContent=w.en; $("backSub").textContent=w.vi; }
   var mc=missCount[w.en]||0;
   $("sessInfo").textContent='Lượt này còn: '+deck.length+' từ'+(mc?(' · chưa thuộc: '+mc+'/'+MISS_LIMIT):'')+(carry.length?(' · chờ trộn: '+carry.length):'');
+  updateReviewBtn();
   stats(); save();
 }
 $("flip").onclick=function(){flipped=!flipped;$("flip").classList.toggle('flipped',flipped);};
@@ -198,15 +211,18 @@ $("btnUnknown").onclick=function(){ if(!deck.length)return; var w=deck.shift(); 
   render(); };
 $("nextBatch").onclick=startBatch;
 $("modeBtn").onclick=function(){ mode=(mode==='en2vi')?'vi2en':'en2vi'; save(); render(); };
+function updateReviewBtn(){ var b=$("btnReview"); if(!b||!deck.length)return; var on=review.has(deck[0].en); b.textContent=on?'📌 Đang học lại — bấm huỷ':'⏰ Học lại sau'; b.classList.toggle('pin-on',on); }
+$("btnReview").onclick=function(){ if(!deck.length)return; var en=deck[0].en; if(review.has(en))review.delete(en); else review.add(en); saveReview(); updateReviewBtn(); if($("revTab"))$("revTab").textContent=review.size; };
 
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ---- Tabs ----
-function setTab(which){ ['Learn','Known','Add'].forEach(function(t){ $("tab"+t).classList.toggle('on',t===which); });
+function setTab(which){ ['Learn','Known','Add','Review'].forEach(function(t){ $("tab"+t).classList.toggle('on',t===which); });
   $("learnView").style.display = which==='Learn'?'block':'none';
   $("learnControls").style.display = which==='Learn'?'flex':'none';
   $("knownList").style.display = which==='Known'?'block':'none';
   $("addView").style.display = which==='Add'?'block':'none';
+  $("reviewView").style.display = which==='Review'?'block':'none';
 }
 function showLearn(){ setTab('Learn'); if(deck.length===0 && remaining().length>0) startBatch(); else render(); }
 function showKnown(){ setTab('Known');
@@ -220,6 +236,16 @@ function showKnown(){ setTab('Known');
   stats();
 }
 function showAdd(){ setTab('Add'); renderCustomList(); }
+function showReview(){ setTab('Review');
+  const box=$("reviewView"); const list=ALL().filter(w=>review.has(w.en));
+  let html='<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 6px"><b>'+list.length+' từ đang "học lại"</b>'+(list.length?'<button class="btn sm warn" id="clearRev">Huỷ tất cả</button>':'')+'</div>';
+  html+='<div style="color:var(--muted);font-size:12.5px;margin-bottom:10px">Các từ này xuất hiện trong MỌI lượt học cho tới khi bạn huỷ.</div>';
+  if(!list.length) html+='<div style="color:var(--muted)">Chưa có từ nào. Khi học, bấm "⏰ Học lại sau" để thêm.</div>';
+  list.forEach(function(w){ html+='<div class="kw"><span class="en">'+esc(w.en)+'</span><span class="vi">'+esc(w.vi)+'</span><button class="btn sm warn" data-rev="'+esc(w.en)+'">Huỷ</button></div>'; });
+  box.innerHTML=html;
+  const cr=$("clearRev"); if(cr) cr.onclick=function(){ if(confirm('Huỷ toàn bộ danh sách học lại?')){ review=new Set(); saveReview(); if($("revTab"))$("revTab").textContent=0; showReview(); } };
+  box.querySelectorAll('button[data-rev]').forEach(function(b){ b.onclick=function(){ review.delete(b.getAttribute('data-rev')); saveReview(); if($("revTab"))$("revTab").textContent=review.size; showReview(); }; });
+}
 function renderCustomList(){
   const box=$("customList");
   let html='<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px"><b>'+custom.length+' từ bạn đã thêm</b></div>';
@@ -240,7 +266,7 @@ $("addBtn").onclick=function(){
 };
 $("inVi").addEventListener('keydown',function(e){ if(e.key==='Enter') $("addBtn").click(); });
 
-$("tabLearn").onclick=showLearn; $("tabKnown").onclick=showKnown; $("tabAdd").onclick=showAdd;
+$("tabLearn").onclick=showLearn; $("tabKnown").onclick=showKnown; $("tabAdd").onclick=showAdd; $("tabReview").onclick=showReview;
 
 document.addEventListener('keydown',function(e){
   if($("learnView").style.display==='none')return;
