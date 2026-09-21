@@ -69,7 +69,7 @@ button.btn.primary{background:var(--primary);border-color:var(--primary);color:#
 <body>
 <div class="wrap">
  <div class="top">
-   <div><h1>🃏 PMP Flashcards — Từ vựng</h1><div class="sub">Học 10 từ mỗi lượt · từ "chưa thuộc" sẽ trộn vào lượt sau</div></div>
+   <div><h1>🃏 PMP Flashcards — Từ vựng</h1><div class="sub">Học 10 từ mỗi lượt · sai "chưa thuộc" 4 lần thì từ đó mới chuyển sang lượt sau</div></div>
    <button class="btn sm" id="theme">☀️</button>
  </div>
  <div class="bar"><i id="prog"></i></div>
@@ -137,9 +137,11 @@ let known=new Set(); try{const s=JSON.parse(localStorage.getItem('pmp_fc_known')
 let custom=[]; try{const c=JSON.parse(localStorage.getItem('pmp_fc_custom')||'[]'); if(Array.isArray(c)) custom=c.filter(w=>w&&w.en&&w.vi);}catch(e){}
 let mode = localStorage.getItem('pmp_fc_mode')||'en2vi';
 let deck=[];    // thẻ trong lượt hiện tại
-let carry=[];   // "chưa thuộc" -> trộn vào lượt sau
+let carry=[];   // từ đã "chưa thuộc" đủ số lần -> trộn vào lượt sau
+let missCount={}; // số lần "chưa thuộc" của từng từ trong lượt hiện tại
 let flipped=false;
 const BATCH_NEW=10;
+const MISS_LIMIT=4; // chưa thuộc đủ 4 lần trong lượt mới chuyển sang lượt sau
 function save(){try{localStorage.setItem('pmp_fc_known',JSON.stringify([...known]));localStorage.setItem('pmp_fc_mode',mode);}catch(e){}}
 function saveCustom(){try{localStorage.setItem('pmp_fc_custom',JSON.stringify(custom));}catch(e){}}
 // toàn bộ từ = từ gốc + từ tự thêm (loại trùng theo tiếng Anh)
@@ -158,7 +160,7 @@ function startBatch(){
   const carrySet=new Set(carry.map(w=>w.en));
   const news=remaining().filter(w=>!carrySet.has(w.en)).slice(0,BATCH_NEW);
   deck=shuffle(carry.concat(news));
-  carry=[];
+  carry=[]; missCount={};
   flipped=false; render();
 }
 function render(){
@@ -184,12 +186,16 @@ function render(){
   flipped=false; $("flip").classList.remove('flipped');
   if(mode==='en2vi'){ $("frontLbl").textContent='Tiếng Anh'; $("frontTerm").textContent=w.en; $("backLbl").textContent='Tiếng Việt'; $("backTerm").textContent=w.vi; $("backSub").textContent=w.en; }
   else { $("frontLbl").textContent='Tiếng Việt'; $("frontTerm").textContent=w.vi; $("backLbl").textContent='Tiếng Anh'; $("backTerm").textContent=w.en; $("backSub").textContent=w.vi; }
-  $("sessInfo").textContent='Lượt này còn: '+deck.length+' từ'+(carry.length?(' · chờ trộn: '+carry.length):'');
+  var mc=missCount[w.en]||0;
+  $("sessInfo").textContent='Lượt này còn: '+deck.length+' từ'+(mc?(' · chưa thuộc: '+mc+'/'+MISS_LIMIT):'')+(carry.length?(' · chờ trộn: '+carry.length):'');
   stats(); save();
 }
 $("flip").onclick=function(){flipped=!flipped;$("flip").classList.toggle('flipped',flipped);};
 $("btnKnown").onclick=function(){ if(!deck.length)return; known.add(deck[0].en); deck.shift(); render(); };
-$("btnUnknown").onclick=function(){ if(!deck.length)return; carry.push(deck.shift()); render(); };
+$("btnUnknown").onclick=function(){ if(!deck.length)return; var w=deck.shift(); missCount[w.en]=(missCount[w.en]||0)+1;
+  if(missCount[w.en]>=MISS_LIMIT){ carry.push(w); }   // đủ 4 lần -> trộn vào lượt sau
+  else { deck.push(w); }                                // chưa đủ -> lặp lại trong lượt này
+  render(); };
 $("nextBatch").onclick=startBatch;
 $("modeBtn").onclick=function(){ mode=(mode==='en2vi')?'vi2en':'en2vi'; save(); render(); };
 
