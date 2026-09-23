@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PMP Vocab Quiz</title>
+<style>
+:root{--bg:#0f141c;--card:#171f2b;--card2:#1d2735;--text:#e7edf6;--muted:#93a1b8;--border:#26303f;
+ --primary:#5b8dff;--soft:#1b2740;--ok:#5fd996;--okbg:#12321f;--okbd:#2f6b45;--warn:#ffb85f;--warnbg:#3a2a12;--warnbd:#7a5a20;--wrong:#ff8080;--wrongbg:#3a1414;--wrongbd:#7a2f2f;}
+:root[data-theme="light"]{--bg:#f4f6fb;--card:#fff;--card2:#f0f3fa;--text:#1a2233;--muted:#5a6784;--border:#e2e7f0;
+ --primary:#2563eb;--soft:#eaf1ff;--ok:#15803d;--okbg:#e7f7ec;--okbd:#8fd6a6;--warn:#b06a12;--warnbg:#fdf2e2;--warnbd:#e6c68a;--wrong:#c02626;--wrongbg:#fdeaea;--wrongbd:#e6a0a0;}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.5;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+h1{font-size:19px;margin:0}
+.sub{color:var(--muted);font-size:12px}
+.tbtn{font-family:inherit;font-size:14px;font-weight:600;padding:7px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.tabs{display:flex;gap:8px;margin:6px 0 14px}
+.tab{flex:1;font-family:inherit;font-size:14px;font-weight:700;padding:10px;border-radius:11px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer}
+.tab.active{background:var(--soft);color:var(--primary);border-color:var(--primary)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lbl{font-size:12px;color:var(--muted);font-weight:600;margin-right:2px}
+select,.seg button{font-family:inherit;font-size:13px}
+select{background:var(--card2);color:var(--text);border:1.5px solid var(--border);border-radius:9px;padding:7px 9px}
+.seg{display:inline-flex;border:1.5px solid var(--border);border-radius:9px;overflow:hidden}
+.seg button{padding:7px 11px;border:0;background:var(--card2);color:var(--muted);cursor:pointer;font-weight:600}
+.seg button.on{background:var(--primary);color:#fff}
+.big{width:100%;font-family:inherit;font-size:16px;font-weight:800;padding:13px;border-radius:12px;border:0;background:var(--primary);color:#fff;cursor:pointer;margin-top:4px}
+.big.sec{background:var(--card2);color:var(--text);border:1.5px solid var(--border)}
+.prog{height:7px;background:var(--card2);border-radius:5px;overflow:hidden;margin:2px 0 14px}
+.prog>i{display:block;height:100%;background:var(--primary);width:0;transition:width .25s}
+.qmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.qword{font-size:26px;font-weight:800;text-align:center;margin:10px 0 6px;word-break:break-word}
+.qdir{text-align:center;font-size:12px;color:var(--muted);margin-bottom:16px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{text-align:left;font-family:inherit;font-size:15.5px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card2);color:var(--text);cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:.12s}
+.opt:hover:not(:disabled){border-color:var(--primary)}
+.opt:disabled{cursor:default}
+.opt .k{flex:0 0 22px;height:22px;border-radius:6px;background:var(--soft);color:var(--primary);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt.correct{background:var(--okbg);border-color:var(--okbd);color:var(--ok)}
+.opt.correct .k{background:var(--okbd);color:#fff}
+.opt.wrong{background:var(--wrongbg);border-color:var(--wrongbd);color:var(--wrong)}
+.opt.wrong .k{background:var(--wrongbd);color:#fff}
+.fb{margin-top:14px;font-size:14px;font-weight:600;text-align:center;min-height:20px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--wrong)}
+.summary{text-align:center;padding:8px 0}
+.score{font-size:44px;font-weight:800}
+.statgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0}
+.stat{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
+.wlist{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.witem{display:flex;gap:10px;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:10px 12px}
+.witem .en{font-weight:700}.witem .vi{color:var(--muted);font-size:13px}
+.witem .x{margin-left:auto;flex:0 0 auto;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 6px}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--primary);margin-left:6px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px}
+</style></head><body>
+<div class="wrap">
+ <header>
+   <div><h1>🎯 PMP Vocab Quiz</h1><div class="sub">Trắc nghiệm 378 từ vựng PMP</div></div>
+   <button class="tbtn" id="theme">☀️</button>
+ </header>
+ <div class="tabs">
+   <button class="tab active" data-tab="quiz">📝 Làm đề</button>
+   <button class="tab" data-tab="wrong">❌ Từ sai <span class="pill" id="wcount">0</span></button>
+ </div>
+
+ <!-- QUIZ TAB -->
+ <div id="tab-quiz">
+   <!-- setup -->
+   <div class="card" id="setup">
+     <div class="row" style="margin-bottom:12px"><span class="lbl">Số câu</span>
+       <div class="seg" id="segN">
+         <button data-n="10" class="on">10</button><button data-n="20">20</button><button data-n="30">30</button><button data-n="0">Tất cả</button>
+       </div>
+     </div>
+     <div class="row" style="margin-bottom:12px"><span class="lbl">Hỏi</span>
+       <div class="seg" id="segDir">
+         <button data-d="en2vi" class="on">Anh → Việt</button><button data-d="vi2en">Việt → Anh</button><button data-d="mix">Trộn</button>
+       </div>
+     </div>
+     <button class="big" id="start">Bắt đầu</button>
+   </div>
+   <!-- running -->
+   <div id="run" class="hidden">
+     <div class="prog"><i id="bar"></i></div>
+     <div class="card">
+       <div class="qmeta"><span id="qidx"></span><span id="qscore"></span></div>
+       <div class="qword" id="qword"></div>
+       <div class="qdir" id="qdirlbl"></div>
+       <div class="opts" id="opts"></div>
+       <div class="fb" id="fb"></div>
+       <button class="big hidden" id="next">Câu tiếp →</button>
+     </div>
+     <button class="big sec" id="quit">Dừng</button>
+   </div>
+   <!-- result -->
+   <div id="result" class="hidden">
+     <div class="card summary">
+       <div class="score" id="rscore"></div>
+       <div class="sub" id="rline"></div>
+       <div class="statgrid">
+         <div class="stat"><b id="rc" style="color:var(--ok)">0</b><span>Đúng</span></div>
+         <div class="stat"><b id="rw" style="color:var(--wrong)">0</b><span>Sai</span></div>
+         <div class="stat"><b id="rt">0</b><span>Tổng</span></div>
+       </div>
+     </div>
+     <button class="big" id="again">Làm đề mới</button>
+     <button class="big sec hidden" id="doWrong" style="margin-top:8px">Ôn lại từ sai vừa rồi</button>
+   </div>
+ </div>
+
+ <!-- WRONG TAB -->
+ <div id="tab-wrong" class="hidden">
+   <div class="card">
+     <div class="row" style="justify-content:space-between">
+       <div><b id="wtitle">Từ đã trả lời sai</b><div class="sub" id="wsub"></div></div>
+     </div>
+     <div class="row" style="margin-top:12px">
+       <button class="big" id="reviewWrong" style="flex:1;margin-top:0">🔁 Ôn lại tất cả từ sai</button>
+     </div>
+     <div class="row" style="margin-top:8px">
+       <button class="tbtn" id="clearWrong">🗑 Xoá hết</button>
+     </div>
+   </div>
+   <div class="wlist" id="wlist"></div>
+ </div>
+
+ <footer>Trả lời đúng 1 từ → gỡ khỏi danh sách sai · Tiến độ lưu trên máy bạn</footer>
+</div>
+
+<script>
+const BASE=[{"en": "Exploratory work", "vi": "Công việc mang tính khám phá"}, {"en": "Subject matter expert (SME)", "vi": "Chuyên gia lĩnh vực"}, {"en": "Execution uncertainty", "vi": "Bất định trong thực thi"}, {"en": "traditional", "vi": "truyền thống"}, {"en": "Implement", "vi": "triển khai thực hiện"}, {"en": "Feasibility", "vi": "Tính khả thi"}, {"en": "Values / Principles", "vi": "Giá trị / Nguyên tắc"}, {"en": "Individuals and interactions", "vi": "Cá nhân và sự tương tác"}, {"en": "establishing", "vi": "thực hiện"}, {"en": "Contract negotiation", "vi": "Đàm phán hợp đồng"}, {"en": "Responding to change", "vi": "Phản ứng với thay đổi"}, {"en": "Comprehensive documentation", "vi": "Tài liệu đầy đủ/chi tiết"}, {"en": "Sustainable development", "vi": "Phát triển bền vững"}, {"en": "Constant pace", "vi": "Nhịp độ ổn định"}, {"en": "Technical excellence", "vi": "Chất lượng/sự xuất sắc kỹ thuật"}, {"en": "Blanket term / Umbrella term", "vi": "Thuật ngữ bao trùm Approach / Method / Practice / Technique / Framework Cách tiếp cận / Phương pháp / Thực hành / Kỹ thuật / Khung"}, {"en": "Superset / Subset", "vi": "Tập cha / Tập con exploit"}, {"en": "Prescriptive", "vi": "Mang tính quy định/áp đặt"}, {"en": "Start-where-you-are", "vi": "Bắt đầu từ chỗ đang đứng"}, {"en": "Elimination of waste", "vi": "Loại bỏ lãng phí"}, {"en": "Increment", "vi": "Lô tăng dần / phần gia tăng"}, {"en": "Iterative", "vi": "Lặp (tinh chỉnh dần)"}, {"en": "Reprioritization", "vi": "Sắp xếp lại ưu tiên"}, {"en": "Stacey Complexity Model", "vi": "Mô hình phức hợp Stacey"}, {"en": "Requirements uncertainty", "vi": "Bất định về yêu cầu"}, {"en": "Technical degree of uncertainty", "vi": "Mức bất định kỹ thuật"}, {"en": "Simple / Complicated / Complex / Chaos", "vi": "Đơn giản / Phức tạp / Phức hợp / Hỗn loạn"}, {"en": "Adaptive approach", "vi": "Cách tiếp cận thích nghi"}, {"en": "Linear/Predictive approach", "vi": "Cách tiếp cận tuyến tính/dự báo"}, {"en": "blame-free", "vi": "không đổ lỗi"}, {"en": "emphasizing", "vi": "nhấn mạnh"}, {"en": "Transitioning", "vi": "Đang chuyển đổi (mô hình)"}, {"en": "major", "vi": "lớn"}, {"en": "jeopardize", "vi": "nguy hiểm"}, {"en": "immediately", "vi": "ngay lập tức"}, {"en": "Facilitate", "vi": "tạo điều kiện"}, {"en": "discussion", "vi": "cuộc thảo luận"}, {"en": "Evaluate the impact", "vi": "đánh giá tác động"}, {"en": "Encourage", "vi": "khuyến khích"}, {"en": "unexpected", "vi": "ngoài dự kiến"}, {"en": "realizes", "vi": "nhận ra"}, {"en": "stakeholder engagement", "vi": "Sự tham gia của các bên liên quan"}, {"en": "perform", "vi": "thực hiện"}, {"en": "assessment", "vi": "đánh giá"}, {"en": "provide", "vi": "cung cấp"}, {"en": "independetly", "vi": "độc lập"}, {"en": "investigate", "vi": "tìm hiểu"}, {"en": "effective", "vi": "hiệu quả"}, {"en": "occurred", "vi": "xảy ra"}, {"en": "discussed", "vi": "thảo luân"}, {"en": "neutral", "vi": "trung lập"}, {"en": "authority vs Influence", "vi": "Quyền lực và ảnh hưởng"}, {"en": "Concern", "vi": "Mối quan ngại"}, {"en": "Assumption", "vi": "Giả định"}, {"en": "Constraint", "vi": "Ràng buộc"}, {"en": "observes", "vi": "quan sát thấy"}, {"en": "prematurely", "vi": "quá sớm"}, {"en": "potential future", "vi": "tiềm năng tương lai"}, {"en": "significant", "vi": "có nghĩa là"}, {"en": "direct", "vi": "trực tiếp"}, {"en": "formal", "vi": "chính thức"}, {"en": "regulatory", "vi": "quy định, pháp lý"}, {"en": "entire", "vi": "toàn bộ"}, {"en": "embraces iterative", "vi": "bao gồm, lặp đi lặp lại"}, {"en": "corrupted", "vi": "bị hỏng"}, {"en": "announced", "vi": "đã thông báo, công bố"}, {"en": "alternative solution", "vi": "thay thế"}, {"en": "postpone", "vi": "hõan"}, {"en": "thoroughly", "vi": "hoàn toàn, kĩ lưỡng"}, {"en": "preference", "vi": "ưa thích"}, {"en": "disrupting", "vi": "gây gián đoạn"}, {"en": "emergency", "vi": "khẩn cấp"}, {"en": "dicuss", "vi": "nói chuyện"}, {"en": "critical", "vi": "quan trọng"}, {"en": "insists", "vi": "khẳng định"}, {"en": "unreasonable", "vi": "không hợp lý"}, {"en": "demanding", "vi": "đòi hỏi"}, {"en": "argues", "vi": "lập luận"}, {"en": "rushing", "vi": "vội vã"}, {"en": "uncertain", "vi": "không chắc chắn"}, {"en": "confused", "vi": "bối rối"}, {"en": "decision", "vi": "phán quyết"}, {"en": "urgent", "vi": "cấp bách"}, {"en": "disappointed", "vi": "thaất vọng"}, {"en": "considering", "vi": "xem xét"}, {"en": "terminating", "vi": "kết thúc"}, {"en": "reassure", "vi": "trấn an"}, {"en": "declined", "vi": "từ chối"}, {"en": "tension", "vi": "căng thẳng"}, {"en": "experiencing", "vi": "trải nghiệm"}, {"en": "frequent", "vi": "thường xuyên"}, {"en": "clarify", "vi": "làm rõ"}, {"en": "struggling", "vi": "đang gặp khó khắn"}, {"en": "complex", "vi": "tổ hợp"}, {"en": "morale", "vi": "tinh thần"}, {"en": "hesitant", "vi": "do dự"}, {"en": "enterprise", "vi": "doanh nghiệp"}, {"en": "convene", "vi": "triệu tập"}, {"en": "integration", "vi": "tích hợp"}, {"en": "inventory", "vi": "tồn kho"}, {"en": "structure", "vi": "cấu trúc"}, {"en": "purposes", "vi": "mục đích"}, {"en": "Disagreements", "vi": "bất đồng"}, {"en": "essential", "vi": "thiết yếu"}, {"en": "excessive", "vi": "quá mức"}, {"en": "contex", "vi": "ngữ cảnh"}, {"en": "criticism", "vi": "chỉ trích"}, {"en": "unnecessary", "vi": "ko cần thiết"}, {"en": "improve", "vi": "cải thiện"}, {"en": "preferred", "vi": "ưa thích"}, {"en": "Gradually", "vi": "dần dần"}, {"en": "inspection", "vi": "điều tra, kiểm tra"}, {"en": "accurate", "vi": "chính xác"}, {"en": "velocity", "vi": "vận tốc"}, {"en": "Proactively", "vi": "chuủ động"}, {"en": "Procurement", "vi": "mua sắm"}, {"en": "adversarial arrangements", "vi": "thỏa thuận đối địch"}, {"en": "formally", "vi": "chính thức"}, {"en": "even", "vi": "thậm chí"}, {"en": "Reinforce", "vi": "củng cố"}, {"en": "Criteria", "vi": "tiêu chuẩn, tiêu chí"}, {"en": "Misaligned", "vi": "bị lệch, không phù hợp"}, {"en": "rarely", "vi": "hiếm khi"}, {"en": "Eliminate", "vi": "loại bỏ"}, {"en": "Involve", "vi": "liên quan"}, {"en": "underlying", "vi": "cơ bản"}, {"en": "decide", "vi": "quyết định"}, {"en": "fostering", "vi": "thúc đẩy"}, {"en": "Coordinate", "vi": "điều phối"}, {"en": "assurance", "vi": "đảm bảo"}, {"en": "refine", "vi": "tinh chỉnh"}, {"en": "contribute", "vi": "đóng góp"}, {"en": "insights", "vi": "hiểu biết sâu"}, {"en": "not being involved", "vi": "không được tham gia"}, {"en": "finance", "vi": "tài chính"}, {"en": "Amend", "vi": "Sửa đổi"}, {"en": "integrate", "vi": "tích hợp"}, {"en": "Arrange", "vi": "sắp xếp"}, {"en": "preparing", "vi": "chuẩn bị"}, {"en": "determine", "vi": "xác định"}, {"en": "intricate", "vi": "phức tạp"}, {"en": "ambiguity and unpredictability", "vi": "mơ hồ và khó đoán"}, {"en": "characterized", "vi": "đặc điểm"}, {"en": "gauge", "vi": "đo, đánh giá"}, {"en": "desire", "vi": "mong muốn"}, {"en": "anticipating", "vi": "dự đoán"}, {"en": "bottlenecks", "vi": "tắc nghẽn"}, {"en": "adhering", "vi": "tuân thủ"}, {"en": "combination", "vi": "kết hợp"}, {"en": "recognize", "vi": "ghi nhận"}, {"en": "instructions", "vi": "hướng dẫn"}, {"en": "negative", "vi": "tiêu cực"}, {"en": "explain", "vi": "giải thích"}, {"en": "facing", "vi": "đối mặt gặp phải"}, {"en": "leading to continuous scope expansion", "vi": "dẫn đến liên lục mở rộng scope"}, {"en": "Throughout", "vi": "xuyên suốt"}, {"en": "apparent", "vi": "rõ ràng"}, {"en": "perspectives", "vi": "quan điểm"}, {"en": "threaten", "vi": "đe dọa"}, {"en": "viability", "vi": "khả năng"}, {"en": "postponed", "vi": "hõoãn"}, {"en": "portfolio", "vi": "danh mục đầu tư"}, {"en": "retrospective", "vi": "nhìn lại quá khứ"}, {"en": "expectations", "vi": "mong đợi, kì vọng"}, {"en": "encounters", "vi": "gặp phải"}, {"en": "acceptance criteria", "vi": "tiêu chí chấp nhận"}, {"en": "jeopardizes", "vi": "gây nguy hiểm"}, {"en": "urgency", "vi": "sự cấp bách"}, {"en": "overlooked", "vi": "bị bỏ qua"}, {"en": "resignation", "vi": "từ chức"}, {"en": "Incorporate", "vi": "kết hợp"}, {"en": "accuracy", "vi": "sự chính xác"}, {"en": "contribution", "vi": "sự đóng góp"}, {"en": "disruption", "vi": "sự gián đoạn"}, {"en": "responsibilities", "vi": "trách nhiệm"}, {"en": "vague", "vi": "mơ hồ và khó đoán"}, {"en": "adhere", "vi": "tuân theo"}, {"en": "growing list", "vi": "danh sách ngày càng nhiều"}, {"en": "pinpoint", "vi": "xác định chính xác"}, {"en": "ahead", "vi": "trước"}, {"en": "accelerating", "vi": "tăng tốc"}, {"en": "possible", "vi": "khả thi"}, {"en": "devising", "vi": "nghĩ ra"}, {"en": "strategy", "vi": "chiến lược"}, {"en": "contributions", "vi": "đongs góp"}, {"en": "proposed", "vi": "đề xuất"}, {"en": "preferences", "vi": "sở thích"}, {"en": "hinder", "vi": "cản trở"}, {"en": "potentially", "vi": "có khả năng"}, {"en": "affecting", "vi": "ảnh hưởng"}, {"en": "skepticism", "vi": "hoài nghi"}, {"en": "anticipated", "vi": "dự kiến"}, {"en": "discrepancies", "vi": "khác biệt"}, {"en": "dispute", "vi": "tranh luận"}, {"en": "arises", "vi": "phát sinh"}, {"en": "strategies", "vi": "chiến lược"}, {"en": "predict", "vi": "dự đoán"}, {"en": "forecast", "vi": "dự báo"}, {"en": "concentrate", "vi": "tập trung"}, {"en": "non-conformances", "vi": "không phù hợp"}, {"en": "halt", "vi": "dừng lại"}, {"en": "strict", "vi": "nghiêm ngặt"}, {"en": "compliance", "vi": "tuân thủ"}, {"en": "increase", "vi": "tăng"}, {"en": "enhancements", "vi": "cải tiến"}, {"en": "diverse", "vi": "phong phú"}, {"en": "distributed", "vi": "phân phối"}, {"en": "confidence", "vi": "tin tưởng"}, {"en": "eager", "vi": "mong muốn, háo hức"}, {"en": "setback", "vi": "sự thụt lùi"}, {"en": "departure", "vi": "rời"}, {"en": "imminent", "vi": "sắp"}, {"en": "resistance", "vi": "sự chống cự, phản đối"}, {"en": "gravitating", "vi": "sức hút, xu hướng"}, {"en": "competitor's", "vi": "đối thủ cạnh tranh"}, {"en": "Intensify", "vi": "tăng cường"}, {"en": "overhaul", "vi": "đại tu"}, {"en": "Precise", "vi": "chiính xác"}, {"en": "sectors", "vi": "lĩnh vực"}, {"en": "dominates", "vi": "thống trị"}, {"en": "diminished", "vi": "giảm đi"}, {"en": "alterations", "vi": "thay đổi"}, {"en": "negligence", "vi": "sơ suất"}, {"en": "consistently omitted", "vi": "liên tục bị bỏ qua"}, {"en": "dissatisfaction", "vi": "không hài lòng"}, {"en": "Advise", "vi": "khuyên nhủ"}, {"en": "subsequent", "vi": "tiếp theo"}, {"en": "encompass", "vi": "bao gồm"}, {"en": "decrease", "vi": "giảm bớt"}, {"en": "enthusiasm", "vi": "nhiệt tình"}, {"en": "recognition", "vi": "công nhận"}, {"en": "evolved", "vi": "phát triển"}, {"en": "probability", "vi": "xác xuất"}, {"en": "satisfaction", "vi": "sự hài lòng"}, {"en": "diminishing", "vi": "giảm dần"}, {"en": "resonates", "vi": "phù hợp"}, {"en": "Instruct", "vi": "hướng dẫn"}, {"en": "deviating", "vi": "lệch hướng"}, {"en": "ascertain", "vi": "xác định"}, {"en": "expedite", "vi": "xuúc tiến"}, {"en": "distracted", "vi": "bị phân tâm"}, {"en": "progressive elaboration", "vi": "lập kế hoạch chi tiết dần"}, {"en": "materials", "vi": "nguyên vật liệu"}, {"en": "reflect", "vi": "phản ánh"}, {"en": "cohesion", "vi": "gắn kết"}, {"en": "gatherings", "vi": "cuộc họp"}, {"en": "unify the team", "vi": "1 nhóm gắn kết"}, {"en": "cohesive unit", "vi": "1 thể thống nhất"}, {"en": "confronted", "vi": "đối mặt, đối đầu"}, {"en": "sudden", "vi": "đột ngột"}, {"en": "inexperience", "vi": "thiếu kinh nghiệm"}, {"en": "omitted", "vi": "bỏ qua"}, {"en": "promptly", "vi": "kịp thời"}, {"en": "preliminary", "vi": "sơ bộ"}, {"en": "assembled", "vi": "thành lập"}, {"en": "behavior", "vi": "hành vi"}, {"en": "discrepancy", "vi": "sự khác biệt"}, {"en": "negatively impacting", "vi": "tiêu cực"}, {"en": "unilateral", "vi": "đơn phương"}, {"en": "Despite", "vi": "cho dù"}, {"en": "engage", "vi": "thuê"}, {"en": "quality assurance", "vi": "đaảm bảo chất lượng"}, {"en": "commitment", "vi": "cam kết"}, {"en": "diversity and inclusion guidelines", "vi": "hướng dẫn về sự đa dạng và hòa nhập"}, {"en": "reiterating", "vi": "nhắc lại"}, {"en": "misalignment", "vi": "lệch hướng"}, {"en": "defects", "vi": "khiếm khuyết"}, {"en": "lacking specifics", "vi": "thiếu chi tiết cụ thể"}, {"en": "disproportionately influencing", "vi": "ảnh hưởng quá mức"}, {"en": "counteract", "vi": "choống lại"}, {"en": "decides", "vi": "quyết ddinhk"}, {"en": "dominating the discussion", "vi": "chi phối cuộc thảo luận"}, {"en": "lack enthusiasm", "vi": "thiếu nhiệt tình"}, {"en": "participating", "vi": "tham gia"}, {"en": "ambiguous", "vi": "mơ hồ và khó đoán"}, {"en": "constrained", "vi": "bị hạn chế"}, {"en": "financial", "vi": "tài chính"}, {"en": "maintain pace", "vi": "duy trì nhịp độ"}, {"en": "hesitant to adopt", "vi": "do dự chấp nhận"}, {"en": "advises", "vi": "khuyên nhủ"}, {"en": "reluctant", "vi": "do dự"}, {"en": "executive", "vi": "điều hành"}, {"en": "convey", "vi": "truyền đạt"}, {"en": "impossible", "vi": "ko thể resistant hesitant"}, {"en": "Adopt an advanced", "vi": "áp dụng nâng cao"}, {"en": "enacted", "vi": "ban hành"}, {"en": "law", "vi": "luật"}, {"en": "fell behind schedule", "vi": "chậm tiến độ"}, {"en": "confidential", "vi": "bảo mật"}, {"en": "inconsistencies", "vi": "thiếu nhất quán"}, {"en": "distinguishing", "vi": "phân biệt"}, {"en": "leveraging", "vi": "tận dụng"}, {"en": "revealed", "vi": "tiết lộ"}, {"en": "hurdle", "vi": "rào cản, trở ngại"}, {"en": "deviations", "vi": "sự sai lệch"}, {"en": "emerging", "vi": "đang nổi lên"}, {"en": "cumbersome", "vi": "côồng kềnh"}, {"en": "expressed reluctance", "vi": "bày tỏ sự miễn cưỡng"}, {"en": "investors", "vi": "nhà đầu tư"}, {"en": "expertise in cybersecurity", "vi": "chuyên môn về an ninh mạng"}, {"en": "negating the need", "vi": "phủ nhận"}, {"en": "either", "vi": "hoặc"}, {"en": "depleted", "vi": "cạn kiệt"}, {"en": "extra expenses incurred", "vi": "chi phí phát sinh thêm"}, {"en": "accommodate", "vi": "chứa, lưu"}, {"en": "derailed", "vi": "trật bánh"}, {"en": "adequately", "vi": "đầy đủ"}, {"en": "promotion", "vi": "thăng chức khuyến mãi"}, {"en": "aspects", "vi": "khía cạnh"}, {"en": "ambiguity", "vi": "mơ hồ"}, {"en": "departs", "vi": "rời đi"}, {"en": "perception of diminishing", "vi": "nhận thức giảm dần"}, {"en": "significantly deviating", "vi": "sai lệch đáng kể"}, {"en": "vulnerability", "vi": "lỗ hổng"}, {"en": "Insufficient", "vi": "không đủ"}, {"en": "recipients", "vi": "người nhận"}, {"en": "indicate", "vi": "biểu thị"}, {"en": "irrelevant", "vi": "không liên quan"}, {"en": "overwhelmed", "vi": "choáng ngợp"}, {"en": "impediment", "vi": "trở ngại"}, {"en": "frustration", "vi": "sự thất vọng"}, {"en": "consistently", "vi": "nhất quán"}, {"en": "compensating", "vi": "bù đắp"}, {"en": "resists", "vi": "phản đối"}, {"en": "disengaged", "vi": "thảnh thơi"}, {"en": "volatility", "vi": "sự tác động"}, {"en": "disagreement", "vi": "bất đồng"}, {"en": "satisfied", "vi": "hài lòng"}, {"en": "inconsistent", "vi": "không nhất quán"}, {"en": "misleading", "vi": "gây hiểu lầm"}, {"en": "violation", "vi": "vi phạm"}, {"en": "mandatory", "vi": "bắt buộc"}, {"en": "Further investigation reveals", "vi": "điều tra sâu hơn cho thấy"}, {"en": "proposed initiative", "vi": "đề xuất sáng kiến"}, {"en": "ambiguities", "vi": "sự mô hồ"}, {"en": "exceeds tolerance", "vi": "vượt quá khả năng chịu đựng"}, {"en": "obsolete", "vi": "lỗi thời"}, {"en": "authority", "vi": "thẩm quyền"}, {"en": "responsible", "vi": "chịu trách nhiệm"}, {"en": "sponsoring", "vi": "tài trợ"}, {"en": "funder", "vi": "được tài trợ"}, {"en": "concluded", "vi": "kết thúc"}, {"en": "clearance", "vi": "thông quan"}, {"en": "competitive", "vi": "cạnh tranh"}, {"en": "adopt", "vi": "áp dụng"}, {"en": "overlapping", "vi": "chồng chéo"}, {"en": "announces", "vi": "thông báo"}, {"en": "refuses", "vi": "từ chối"}, {"en": "pressuring", "vi": "gây sức ép"}, {"en": "explains", "vi": "giải thích"}, {"en": "contingency", "vi": "nguồn dự phòng"}, {"en": "adequate", "vi": "đầy đủ"}, {"en": "sufficient", "vi": "hợp lý"}, {"en": "acceleration", "vi": "gia tốc"}, {"en": "revised", "vi": "sửa đổi"}, {"en": "responsibility", "vi": "trách nhiệm"}, {"en": "and prone to errors", "vi": "dễ xảy ra lỗi"}, {"en": "involving", "vi": "liên quan"}, {"en": "outpacing", "vi": "vượt xa"}, {"en": "prefer", "vi": "thích hơn"}, {"en": "Examine", "vi": "nghiên cứu xem xét"}, {"en": "cooperation", "vi": "hợp tác"}, {"en": "restrictions", "vi": "hạn chế"}, {"en": "mistakenly", "vi": "nhầm lẫn"}, {"en": "recurring", "vi": "định kì"}, {"en": "struggled to", "vi": "gặp khó khắn trong việc"}, {"en": "executing", "vi": "thực hiện"}, {"en": "instability", "vi": "bất ổn"}, {"en": "amendments", "vi": "sửa đổi"}, {"en": "retaining", "vi": "lưu giữ"}, {"en": "negatively", "vi": "tiêu cực"}, {"en": "layoffs", "vi": "sa thải"}, {"en": "equalize", "vi": "cân bằng"}, {"en": "equipment", "vi": "thiết bị"}, {"en": "diagnostic", "vi": "chuẩn đoán"}, {"en": "inspections", "vi": "kiểm tra"}, {"en": "bound by", "vi": "bị giàng buộc"}, {"en": "undermining", "vi": "làm suy yếu"}];
+const LS_WRONG='pmpvq_wrong', LS_THEME='pmpvq_theme';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* theme */
+(function(){let t;try{t=localStorage.getItem(LS_THEME)}catch(e){}t=t||'dark';document.documentElement.setAttribute('data-theme',t);})();
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(LS_THEME,t)}catch(e){}$('#theme').textContent=t==='dark'?'☀️':'🌙';}
+setTheme(document.documentElement.getAttribute('data-theme'));
+$('#theme').onclick=()=>setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+
+/* wrong store (by en key) */
+function loadWrong(){try{return JSON.parse(localStorage.getItem(LS_WRONG)||'[]')}catch(e){return[]}}
+function saveWrong(a){try{localStorage.setItem(LS_WRONG,JSON.stringify(a))}catch(e){}}
+let wrong=loadWrong();
+function addWrong(en){if(!wrong.includes(en)){wrong.push(en);saveWrong(wrong);}refreshWrong();}
+function removeWrong(en){wrong=wrong.filter(x=>x!==en);saveWrong(wrong);refreshWrong();}
+function wordByEn(en){return BASE.find(w=>w.en===en);}
+function refreshWrong(){$('#wcount').textContent=wrong.length;renderWrongTab();}
+
+/* utils */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* settings */
+let nSel=10,dirSel='en2vi';
+$('#segN').onclick=e=>{if(e.target.dataset.n===undefined)return;$$('#segN button').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');nSel=+e.target.dataset.n;};
+$('#segDir').onclick=e=>{if(e.target.dataset.d===undefined)return;$$('#segDir button').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');dirSel=e.target.dataset.d;};
+
+/* tabs */
+$$('.tab').forEach(t=>t.onclick=()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+  const k=t.dataset.tab;
+  $('#tab-quiz').classList.toggle('hidden',k!=='quiz');
+  $('#tab-wrong').classList.toggle('hidden',k!=='wrong');
+});
+
+/* quiz state */
+let queue=[],pos=0,correct=0,roundWrong=[],reviewMode=false;
+
+function buildRound(pool,dir){
+  let words=shuffle(pool);
+  if(nSel>0 && !reviewMode) words=words.slice(0,nSel);
+  return words.map(w=>{
+    const d = dir==='mix' ? (Math.random()<.5?'en2vi':'vi2en') : dir;
+    const qKey = d==='en2vi' ? 'en':'vi';
+    const aKey = d==='en2vi' ? 'vi':'en';
+    // distractors from whole BASE, distinct answer text
+    const poutPool=shuffle(BASE.filter(x=>x[aKey]!==w[aKey]));
+    const distract=[]; const seen=new Set([w[aKey]]);
+    for(const x of poutPool){if(!seen.has(x[aKey])){seen.add(x[aKey]);distract.push(x[aKey]);}if(distract.length===3)break;}
+    const options=shuffle([w[aKey],...distract]);
+    return {en:w.en, q:w[qKey], a:w[aKey], options, dir:d};
+  });
+}
+
+function startRound(pool,dir){
+  reviewMode = pool!==BASE ? reviewMode : false;
+  queue=buildRound(pool,dir);pos=0;correct=0;roundWrong=[];
+  $('#setup').classList.add('hidden');$('#result').classList.add('hidden');$('#run').classList.remove('hidden');
+  // ensure quiz tab visible
+  $$('.tab').forEach(x=>x.classList.remove('active'));$$('.tab')[0].classList.add('active');
+  $('#tab-quiz').classList.remove('hidden');$('#tab-wrong').classList.add('hidden');
+  renderQ();
+}
+
+function renderQ(){
+  const it=queue[pos];
+  $('#bar').style.width=(pos/queue.length*100)+'%';
+  $('#qidx').textContent=`Câu ${pos+1}/${queue.length}`;
+  $('#qscore').textContent=`✅ ${correct}`;
+  $('#qword').textContent=it.q;
+  $('#qdirlbl').textContent=it.dir==='en2vi'?'Nghĩa tiếng Việt là?':'Từ tiếng Anh là?';
+  $('#fb').textContent='';$('#fb').className='fb';
+  $('#next').classList.add('hidden');
+  const box=$('#opts');box.innerHTML='';
+  it.options.forEach((opt,i)=>{
+    const b=document.createElement('button');b.className='opt';
+    b.innerHTML=`<span class="k">${'ABCD'[i]}</span><span>${opt}</span>`;
+    b.onclick=()=>pick(b,opt,it);
+    box.appendChild(b);
+  });
+}
+
+function pick(btn,opt,it){
+  $$('#opts .opt').forEach(b=>b.disabled=true);
+  const ok = opt===it.a;
+  if(ok){
+    btn.classList.add('correct');correct++;
+    $('#fb').textContent='Chính xác 🎉';$('#fb').className='fb ok';
+    removeWrong(it.en); // mastered
+  }else{
+    btn.classList.add('wrong');
+    $$('#opts .opt').forEach(b=>{if(b.querySelector('span:last-child').textContent===it.a)b.classList.add('correct');});
+    $('#fb').innerHTML=`Sai. Đáp án đúng: <b>${it.a}</b>`;$('#fb').className='fb no';
+    addWrong(it.en);roundWrong.push(it.en);
+  }
+  $('#qscore').textContent=`✅ ${correct}`;
+  $('#next').classList.remove('hidden');
+  $('#next').textContent = pos+1>=queue.length ? 'Xem kết quả →' : 'Câu tiếp →';
+  $('#next').focus();
+}
+
+$('#next').onclick=()=>{pos++;if(pos>=queue.length)finish();else renderQ();};
+$('#quit').onclick=()=>{$('#run').classList.add('hidden');$('#setup').classList.remove('hidden');reviewMode=false;};
+
+function finish(){
+  $('#bar').style.width='100%';
+  $('#run').classList.add('hidden');$('#result').classList.remove('hidden');
+  const t=queue.length,w=t-correct,pct=t?Math.round(correct/t*100):0;
+  $('#rscore').textContent=pct+'%';
+  $('#rscore').style.color = pct>=80?'var(--ok)':pct>=60?'var(--warn)':'var(--wrong)';
+  $('#rline').textContent = reviewMode? 'Ôn lại từ sai xong!' : (pct>=80?'Tốt lắm! 💪':pct>=60?'Gần được rồi 👍':'Cần ôn thêm 📚');
+  $('#rc').textContent=correct;$('#rw').textContent=w;$('#rt').textContent=t;
+  $('#doWrong').classList.toggle('hidden', roundWrong.length===0);
+  reviewMode=false;
+}
+
+$('#start').onclick=()=>startRound(BASE,dirSel);
+$('#again').onclick=()=>{$('#result').classList.add('hidden');$('#setup').classList.remove('hidden');};
+$('#doWrong').onclick=()=>{const pool=roundWrong.map(wordByEn).filter(Boolean);if(!pool.length)return;reviewMode=true;startRound(pool,dirSel);};
+
+/* wrong tab */
+$('#reviewWrong').onclick=()=>{const pool=wrong.map(wordByEn).filter(Boolean);if(!pool.length){alert('Chưa có từ sai nào 🎉');return;}reviewMode=true;startRound(pool,dirSel);};
+$('#clearWrong').onclick=()=>{if(!wrong.length)return;if(confirm('Xoá toàn bộ danh sách từ sai?')){wrong=[];saveWrong(wrong);refreshWrong();}};
+function renderWrongTab(){
+  $('#wsub').textContent=wrong.length?`${wrong.length} từ cần ôn lại`:'';
+  const box=$('#wlist');box.innerHTML='';
+  if(!wrong.length){box.innerHTML='<div class="empty">Chưa có từ sai nào.<br>Làm đề ở tab 📝 — trả lời sai từ nào sẽ xuất hiện ở đây.</div>';$('#reviewWrong').disabled=true;$('#reviewWrong').style.opacity=.5;return;}
+  $('#reviewWrong').disabled=false;$('#reviewWrong').style.opacity=1;
+  wrong.slice().reverse().forEach(en=>{
+    const w=wordByEn(en);if(!w)return;
+    const d=document.createElement('div');d.className='witem';
+    d.innerHTML=`<div><div class="en">${w.en}</div><div class="vi">${w.vi}</div></div><button class="x" title="Đã thuộc">✕</button>`;
+    d.querySelector('.x').onclick=()=>removeWrong(en);
+    box.appendChild(d);
+  });
+}
+
+/* keyboard */
+document.addEventListener('keydown',e=>{
+  if($('#run').classList.contains('hidden'))return;
+  if(!$('#next').classList.contains('hidden')){if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#next').click();}return;}
+  const i='1234'.indexOf(e.key);if(i>=0){const b=$$('#opts .opt')[i];if(b&&!b.disabled)b.click();}
+});
+
+refreshWrong();
+</script>
+</body></html>
